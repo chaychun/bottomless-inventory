@@ -44,32 +44,35 @@ public class RecipeBookButtonWidget extends AbstractWidget {
 
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        // Determine which texture to use based on toggle state
-        int u = toggled ? ACTIVE_U : INACTIVE_U;
-        int v = toggled ? ACTIVE_V : INACTIVE_V;
+        // Draw button background with 3D border effect
+        int x = getX();
+        int y = getY();
+        int bgColor = toggled ? 0xFF6B8E23 : 0xFF8B4513; // Green when active, brown when inactive
 
-        // Draw the button texture
-        graphics.blit(
-            RECIPE_BUTTON_LOCATION,
-            getX(),
-            getY(),
-            u,
-            v,
-            BUTTON_WIDTH,
-            BUTTON_HEIGHT,
-            TEXTURE_WIDTH,
-            TEXTURE_HEIGHT
-        );
+        // Background
+        graphics.fill(x, y, x + BUTTON_WIDTH, y + BUTTON_HEIGHT, bgColor);
+
+        // 3D borders
+        graphics.fill(x, y, x + BUTTON_WIDTH, y + 1, 0xFFFFFFFF); // Top (light)
+        graphics.fill(x, y, x + 1, y + BUTTON_HEIGHT, 0xFFFFFFFF); // Left (light)
+        graphics.fill(x, y + BUTTON_HEIGHT - 1, x + BUTTON_WIDTH, y + BUTTON_HEIGHT, 0xFF373737); // Bottom (dark)
+        graphics.fill(x + BUTTON_WIDTH - 1, y, x + BUTTON_WIDTH, y + BUTTON_HEIGHT, 0xFF373737); // Right (dark)
+
+        // Draw a simple book icon (rectangle with lines)
+        int iconX = x + 4;
+        int iconY = y + 3;
+        // Book cover
+        graphics.fill(iconX, iconY, iconX + 12, iconY + 12, 0xFFDEB887);
+        // Book spine
+        graphics.fill(iconX, iconY, iconX + 2, iconY + 12, 0xFF8B4513);
+        // Page lines
+        graphics.fill(iconX + 4, iconY + 3, iconX + 10, iconY + 4, 0xFF000000);
+        graphics.fill(iconX + 4, iconY + 5, iconX + 10, iconY + 6, 0xFF000000);
+        graphics.fill(iconX + 4, iconY + 7, iconX + 10, iconY + 8, 0xFF000000);
 
         // Draw hover overlay if mouse is over the button
         if (isHovered()) {
-            graphics.fill(
-                getX(),
-                getY(),
-                getX() + BUTTON_WIDTH,
-                getY() + BUTTON_HEIGHT,
-                0x40FFFFFF // Semi-transparent white overlay
-            );
+            graphics.fill(x, y, x + BUTTON_WIDTH, y + BUTTON_HEIGHT, 0x40FFFFFF);
         }
     }
 
