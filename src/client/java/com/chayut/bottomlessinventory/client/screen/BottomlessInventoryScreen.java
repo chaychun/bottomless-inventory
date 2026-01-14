@@ -1,5 +1,6 @@
 package com.chayut.bottomlessinventory.client.screen;
 
+import com.chayut.bottomlessinventory.client.screen.widget.InfiniteGridWidget;
 import com.chayut.bottomlessinventory.screen.BottomlessScreenHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -30,6 +31,9 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
     private static final int GRID_PLACEHOLDER_COLOR = 0xFF5A5A5A; // Dark gray for infinite grid area
     private static final int BORDER_COLOR = 0xFF3C3C3C;          // Dark border color
 
+    // Widget references
+    private InfiniteGridWidget gridWidget;
+
     public BottomlessInventoryScreen(BottomlessScreenHandler handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
         this.imageWidth = BACKGROUND_WIDTH;
@@ -39,8 +43,18 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
     @Override
     protected void init() {
         super.init();
-        // Widget initialization will be added in future phases
-        // This includes: tabs, search bar, filter buttons, scroll bars, recipe book button
+
+        // Initialize the infinite grid widget in the right panel
+        int gridX = this.leftPos + RIGHT_PANEL_X_OFFSET + 8;
+        int gridY = this.topPos + 30; // Leave space for tabs and search bar
+        int gridWidth = RIGHT_PANEL_WIDTH - 16;
+        int gridHeight = BACKGROUND_HEIGHT - 40; // Leave space at top and bottom
+
+        this.gridWidget = new InfiniteGridWidget(gridX, gridY, gridWidth, gridHeight);
+        this.addRenderableWidget(this.gridWidget);
+
+        // Future widget initialization will be added here:
+        // - tabs, search bar, filter buttons, recipe book button
     }
 
     @Override
@@ -66,21 +80,6 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
         graphics.fill(x + BACKGROUND_WIDTH - 1, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, BORDER_COLOR);
         // Middle divider
         graphics.fill(x + LEFT_PANEL_WIDTH, y, x + LEFT_PANEL_WIDTH + 1, y + BACKGROUND_HEIGHT, BORDER_COLOR);
-
-        // Draw placeholder for infinite grid area in right panel
-        // This will be replaced with actual grid rendering in future phases
-        int gridX = x + RIGHT_PANEL_X_OFFSET + 8;
-        int gridY = y + 30; // Leave space for tabs and search bar
-        int gridWidth = RIGHT_PANEL_WIDTH - 16;
-        int gridHeight = BACKGROUND_HEIGHT - 40; // Leave space at top and bottom
-
-        graphics.fill(gridX, gridY, gridX + gridWidth, gridY + gridHeight, GRID_PLACEHOLDER_COLOR);
-
-        // Draw border around grid placeholder
-        graphics.fill(gridX, gridY, gridX + gridWidth, gridY + 1, BORDER_COLOR); // Top
-        graphics.fill(gridX, gridY + gridHeight - 1, gridX + gridWidth, gridY + gridHeight, BORDER_COLOR); // Bottom
-        graphics.fill(gridX, gridY, gridX + 1, gridY + gridHeight, BORDER_COLOR); // Left
-        graphics.fill(gridX + gridWidth - 1, gridY, gridX + gridWidth, gridY + gridHeight, BORDER_COLOR); // Right
     }
 
     @Override
