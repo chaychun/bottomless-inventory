@@ -91,9 +91,11 @@ public class BottomlessScreenHandler extends AbstractContainerMenu {
      */
     @Override
     public void slotsChanged(net.minecraft.world.Container container) {
-        this.access.execute((level, pos) -> {
+        // Don't rely on access.execute() as access is NULL for client-constructed handlers
+        // and may not be properly set even on server side since we don't pass a real block position
+        if (this.player.level() != null) {
             slotChangedCraftingGrid(this.player);
-        });
+        }
     }
 
     /**

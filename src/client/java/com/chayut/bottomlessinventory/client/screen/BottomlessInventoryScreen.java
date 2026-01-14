@@ -92,6 +92,18 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
         // The hotbar slots are at indices 10-18, positioned at y=142 relative to topPos
         // Each slot is 18x18 pixels, starting at x=8
         renderHotbarSlotBackgrounds(graphics, x, y);
+
+        // Draw armor slot backgrounds (4 slots: head, chest, legs, feet)
+        renderArmorSlotBackgrounds(graphics, x, y);
+
+        // Draw offhand slot background
+        renderOffhandSlotBackground(graphics, x, y);
+
+        // Draw crafting grid slot backgrounds (2x2 grid)
+        renderCraftingGridSlotBackgrounds(graphics, x, y);
+
+        // Draw crafting result slot background
+        renderCraftingResultSlotBackground(graphics, x, y);
     }
 
     /**
@@ -104,20 +116,73 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
 
         for (int i = 0; i < 9; i++) {
             int slotX = screenX + 8 + i * 18;
-
-            // Draw slot background (darker gray for slot interior)
-            graphics.fill(slotX, hotbarY, slotX + 16, hotbarY + 16, 0xFF8B8B8B);
-
-            // Draw slot border (lighter on top-left, darker on bottom-right for 3D effect)
-            // Top border (light)
-            graphics.fill(slotX - 1, hotbarY - 1, slotX + 16, hotbarY, 0xFFFFFFFF);
-            // Left border (light)
-            graphics.fill(slotX - 1, hotbarY - 1, slotX, hotbarY + 16, 0xFFFFFFFF);
-            // Bottom border (dark)
-            graphics.fill(slotX, hotbarY + 16, slotX + 17, hotbarY + 17, 0xFF373737);
-            // Right border (dark)
-            graphics.fill(slotX + 16, hotbarY, slotX + 17, hotbarY + 17, 0xFF373737);
+            renderSlotBackground(graphics, slotX, hotbarY);
         }
+    }
+
+    /**
+     * Renders the background for armor slots.
+     * 4 slots at x=8, y=8/26/44/62
+     */
+    private void renderArmorSlotBackgrounds(GuiGraphics graphics, int screenX, int screenY) {
+        for (int i = 0; i < 4; i++) {
+            int slotX = screenX + 8;
+            int slotY = screenY + 8 + i * 18;
+            renderSlotBackground(graphics, slotX, slotY);
+        }
+    }
+
+    /**
+     * Renders the background for the offhand slot.
+     * 1 slot at x=77, y=62
+     */
+    private void renderOffhandSlotBackground(GuiGraphics graphics, int screenX, int screenY) {
+        int slotX = screenX + 77;
+        int slotY = screenY + 62;
+        renderSlotBackground(graphics, slotX, slotY);
+    }
+
+    /**
+     * Renders the background for crafting grid slots.
+     * 4 slots (2x2) starting at x=98, y=18
+     */
+    private void renderCraftingGridSlotBackgrounds(GuiGraphics graphics, int screenX, int screenY) {
+        for (int row = 0; row < 2; row++) {
+            for (int col = 0; col < 2; col++) {
+                int slotX = screenX + 98 + col * 18;
+                int slotY = screenY + 18 + row * 18;
+                renderSlotBackground(graphics, slotX, slotY);
+            }
+        }
+    }
+
+    /**
+     * Renders the background for the crafting result slot.
+     * 1 slot at x=154, y=28
+     */
+    private void renderCraftingResultSlotBackground(GuiGraphics graphics, int screenX, int screenY) {
+        int slotX = screenX + 154;
+        int slotY = screenY + 28;
+        renderSlotBackground(graphics, slotX, slotY);
+    }
+
+    /**
+     * Renders a single slot background with 3D border effect.
+     * Creates a visual appearance similar to vanilla inventory slots.
+     */
+    private void renderSlotBackground(GuiGraphics graphics, int slotX, int slotY) {
+        // Draw slot background (darker gray for slot interior)
+        graphics.fill(slotX, slotY, slotX + 16, slotY + 16, 0xFF8B8B8B);
+
+        // Draw slot border (lighter on top-left, darker on bottom-right for 3D effect)
+        // Top border (light)
+        graphics.fill(slotX - 1, slotY - 1, slotX + 16, slotY, 0xFFFFFFFF);
+        // Left border (light)
+        graphics.fill(slotX - 1, slotY - 1, slotX, slotY + 16, 0xFFFFFFFF);
+        // Bottom border (dark)
+        graphics.fill(slotX, slotY + 16, slotX + 17, slotY + 17, 0xFF373737);
+        // Right border (dark)
+        graphics.fill(slotX + 16, slotY, slotX + 17, slotY + 17, 0xFF373737);
     }
 
     @Override
