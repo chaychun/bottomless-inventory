@@ -3,7 +3,8 @@
 	"package": "com.chayut.bottomlessinventory.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ExampleClientMixin"
+		"ExampleClientMixin",
+		"InventoryKeyMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

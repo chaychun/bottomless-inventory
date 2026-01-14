@@ -3,6 +3,7 @@ package com.chayut.bottomlessinventory;
 import com.chayut.bottomlessinventory.data.ModAttachments;
 import com.chayut.bottomlessinventory.network.BottomlessNetworking;
 import com.chayut.bottomlessinventory.network.InventorySyncHandler;
+import com.chayut.bottomlessinventory.network.OpenInventoryHandler;
 import com.chayut.bottomlessinventory.screen.BottomlessScreenHandler;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Registry;
@@ -49,6 +50,9 @@ public class BottomlessInventory implements ModInitializer {
 
 		// Register sync handlers (must be after networking)
 		InventorySyncHandler.register();
+
+		// Register open inventory handler (must be after networking)
+		OpenInventoryHandler.register();
 
 		LOGGER.info("Bottomless Inventory mod initialized successfully");
 	}
