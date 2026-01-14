@@ -2,6 +2,7 @@ package com.chayut.bottomlessinventory.network;
 
 import com.chayut.bottomlessinventory.BottomlessInventory;
 import com.chayut.bottomlessinventory.network.packets.InventoryActionPacket;
+import com.chayut.bottomlessinventory.network.packets.OpenInventoryPacket;
 import com.chayut.bottomlessinventory.network.packets.SyncInventoryPacket;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +18,8 @@ public class BottomlessNetworking {
             ResourceLocation.fromNamespaceAndPath(BottomlessInventory.MOD_ID, "sync_inventory");
     public static final ResourceLocation INVENTORY_ACTION_ID =
             ResourceLocation.fromNamespaceAndPath(BottomlessInventory.MOD_ID, "inventory_action");
+    public static final ResourceLocation OPEN_INVENTORY_ID =
+            ResourceLocation.fromNamespaceAndPath(BottomlessInventory.MOD_ID, "open_inventory");
 
     /**
      * Registers all packet types for the mod.
@@ -35,6 +38,10 @@ public class BottomlessNetworking {
         PayloadTypeRegistry.playC2S().register(
                 InventoryActionPacket.TYPE,
                 InventoryActionPacket.CODEC
+        );
+        PayloadTypeRegistry.playC2S().register(
+                OpenInventoryPacket.TYPE,
+                OpenInventoryPacket.CODEC
         );
 
         BottomlessInventory.LOGGER.info("Bottomless Inventory networking registered successfully");
