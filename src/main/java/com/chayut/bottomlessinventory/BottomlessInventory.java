@@ -3,7 +3,13 @@ package com.chayut.bottomlessinventory;
 import com.chayut.bottomlessinventory.data.ModAttachments;
 import com.chayut.bottomlessinventory.network.BottomlessNetworking;
 import com.chayut.bottomlessinventory.network.InventorySyncHandler;
+import com.chayut.bottomlessinventory.screen.BottomlessScreenHandler;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.inventory.MenuType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +22,10 @@ public class BottomlessInventory implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+	// Screen handler type for the bottomless inventory screen
+	public static final MenuType<BottomlessScreenHandler> BOTTOMLESS_SCREEN_HANDLER_TYPE =
+			new MenuType<>(BottomlessScreenHandler::new, FeatureFlags.DEFAULT_FLAGS);
+
 	@Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -23,6 +33,13 @@ public class BottomlessInventory implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Initializing Bottomless Inventory mod");
+
+		// Register screen handler type
+		Registry.register(
+			BuiltInRegistries.MENU,
+			ResourceLocation.fromNamespaceAndPath(MOD_ID, "bottomless_inventory"),
+			BOTTOMLESS_SCREEN_HANDLER_TYPE
+		);
 
 		// Register attachments
 		ModAttachments.register();
