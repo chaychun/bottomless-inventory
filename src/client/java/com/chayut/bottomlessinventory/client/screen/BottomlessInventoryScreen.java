@@ -4,7 +4,9 @@ import com.chayut.bottomlessinventory.client.screen.widget.InfiniteGridWidget;
 import com.chayut.bottomlessinventory.screen.BottomlessScreenHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 /**
@@ -26,10 +28,11 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
     private static final int RIGHT_PANEL_WIDTH = BACKGROUND_WIDTH - LEFT_PANEL_WIDTH;
 
     // Color constants for placeholder rendering
-    private static final int LEFT_PANEL_COLOR = 0xFF8B8B8B;      // Gray for left panel
     private static final int RIGHT_PANEL_COLOR = 0xFF7A7A7A;     // Slightly darker gray for right panel
-    private static final int GRID_PLACEHOLDER_COLOR = 0xFF5A5A5A; // Dark gray for infinite grid area
     private static final int BORDER_COLOR = 0xFF3C3C3C;          // Dark border color
+
+    // Vanilla inventory texture
+    private static final ResourceLocation INVENTORY_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/container/inventory.png");
 
     // Widget references
     private InfiniteGridWidget gridWidget;
@@ -59,27 +62,21 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
 
     @Override
     protected void renderBg(GuiGraphics graphics, float delta, int mouseX, int mouseY) {
-        // Render the background placeholder
         int x = this.leftPos;
         int y = this.topPos;
 
-        // Draw left panel background (vanilla elements area)
-        graphics.fill(x, y, x + LEFT_PANEL_WIDTH, y + BACKGROUND_HEIGHT, LEFT_PANEL_COLOR);
+        // For now, use a simple gray background for the left panel
+        // TODO: In the future, use vanilla inventory texture properly
+        graphics.fill(x, y, x + LEFT_PANEL_WIDTH, y + BACKGROUND_HEIGHT, 0xFFC6C6C6);
 
         // Draw right panel background (infinite inventory area)
         graphics.fill(x + RIGHT_PANEL_X_OFFSET, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, RIGHT_PANEL_COLOR);
 
-        // Draw a border around the entire screen
-        // Top border
-        graphics.fill(x, y, x + BACKGROUND_WIDTH, y + 1, BORDER_COLOR);
-        // Bottom border
-        graphics.fill(x, y + BACKGROUND_HEIGHT - 1, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, BORDER_COLOR);
-        // Left border
-        graphics.fill(x, y, x + 1, y + BACKGROUND_HEIGHT, BORDER_COLOR);
+        // Draw borders
+        // Middle divider between left and right panels
+        graphics.fill(x + LEFT_PANEL_WIDTH, y, x + LEFT_PANEL_WIDTH + 1, y + BACKGROUND_HEIGHT, BORDER_COLOR);
         // Right border
         graphics.fill(x + BACKGROUND_WIDTH - 1, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, BORDER_COLOR);
-        // Middle divider
-        graphics.fill(x + LEFT_PANEL_WIDTH, y, x + LEFT_PANEL_WIDTH + 1, y + BACKGROUND_HEIGHT, BORDER_COLOR);
     }
 
     @Override

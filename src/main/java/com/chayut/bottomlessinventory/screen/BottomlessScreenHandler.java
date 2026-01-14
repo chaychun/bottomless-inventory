@@ -1,10 +1,13 @@
 package com.chayut.bottomlessinventory.screen;
 
 import com.chayut.bottomlessinventory.BottomlessInventory;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.Equippable;
 
 /**
  * Screen handler for the bottomless inventory screen.
@@ -59,28 +62,17 @@ public class BottomlessScreenHandler extends AbstractContainerMenu {
 
         // Add armor slots (indices 5-8)
         // Order: head, chest, legs, feet (reverse of vanilla inventory)
+        // Equipment slots: HEAD, CHEST, LEGS, FEET
+        EquipmentSlot[] armorTypes = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
         for (int i = 0; i < 4; ++i) {
             final int armorSlotIndex = 39 - i; // Vanilla armor slots: 36=feet, 37=legs, 38=chest, 39=head
-            this.addSlot(new Slot(playerInventory, armorSlotIndex, 8, 8 + i * 18) {
-                @Override
-                public int getMaxStackSize() {
-                    return 1;
-                }
-
-                @Override
-                public boolean mayPlace(ItemStack stack) {
-                    return true; // Simplified for now - will validate via equipment slot type
-                }
-            });
+            final EquipmentSlot equipmentSlot = armorTypes[i];
+            this.addSlot(new ArmorSlot(playerInventory, armorSlotIndex, 8, 8 + i * 18, equipmentSlot, this.player));
         }
 
         // Add offhand slot (index 9)
-        this.addSlot(new Slot(playerInventory, 40, 77, 62) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return true;
-            }
-        });
+        // Vanilla offhand accepts any item and uses normal stack sizes
+        this.addSlot(new Slot(playerInventory, 40, 77, 62));
 
         // Add hotbar slots (indices 10-18)
         for (int i = 0; i < 9; ++i) {
@@ -140,11 +132,15 @@ public class BottomlessScreenHandler extends AbstractContainerMenu {
                     return ItemStack.EMPTY;
                 }
             }
-            // Hotbar slots
+            // Hotbar slots - try to move to appropriate armor/offhand slot
             else if (slotIndex >= HOTBAR_START && slotIndex <= HOTBAR_END) {
-                // Simplified for now - just fail the quick move from hotbar
-                // TODO: Implement proper armor/offhand detection in Phase 4
-                return ItemStack.EMPTY;
+                // Try armor slots first (the moveItemStackTo will use mayPlace to validate)
+                if (!this.moveItemStackTo(slotStack, ARMOR_START, ARMOR_END + 1, false)) {
+                    // If not armor, try offhand
+                    if (!this.moveItemStackTo(slotStack, OFFHAND_SLOT, OFFHAND_SLOT + 1, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                }
             }
 
             if (slotStack.isEmpty()) {
@@ -199,5 +195,40 @@ public class BottomlessScreenHandler extends AbstractContainerMenu {
      */
     public ResultContainer getResultContainer() {
         return this.resultContainer;
+    }
+
+    /**
+     * Custom armor slot for the specified equipment slot.
+     * Validates that only correct armor types can be placed in each slot.
+     */
+    private static class ArmorSlot extends Slot {
+        private final EquipmentSlot equipmentSlot;
+
+        public ArmorSlot(Inventory inventory, int index, int x, int y, EquipmentSlot equipmentSlot, Player player) {
+            super(inventory, index, x, y);
+            this.equipmentSlot = equipmentSlot;
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack stack) {
+            // Check if the item has an Equippable component and matches this equipment slot
+            Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
+            if (equippable != null) {
+                return equippable.slot() == this.equipmentSlot;
+            }
+            return false;
+        }
+
+        @Override
+        public int getMaxStackSize() {
+            return 1;
+        }
+
+        /**
+         * Gets the equipment slot type for this armor slot.
+         */
+        public EquipmentSlot getEquipmentSlot() {
+            return this.equipmentSlot;
+        }
     }
 }
