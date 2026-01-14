@@ -75,9 +75,10 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
         int x = this.leftPos;
         int y = this.topPos;
 
-        // For now, use a simple gray background for the left panel
-        // TODO: In the future, use vanilla inventory texture properly
-        graphics.fill(x, y, x + LEFT_PANEL_WIDTH, y + BACKGROUND_HEIGHT, 0xFFC6C6C6);
+        // Draw vanilla inventory texture for the left panel
+        // The vanilla inventory texture is 176x166 pixels and contains all the slot backgrounds
+        // Using the standard blit method with texture coordinates
+        graphics.blit(INVENTORY_LOCATION, x, y, 0, 0, LEFT_PANEL_WIDTH, BACKGROUND_HEIGHT, 256, 256);
 
         // Draw right panel background (infinite inventory area)
         graphics.fill(x + RIGHT_PANEL_X_OFFSET, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, RIGHT_PANEL_COLOR);
@@ -87,103 +88,8 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
         graphics.fill(x + LEFT_PANEL_WIDTH, y, x + LEFT_PANEL_WIDTH + 1, y + BACKGROUND_HEIGHT, BORDER_COLOR);
         // Right border
         graphics.fill(x + BACKGROUND_WIDTH - 1, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, BORDER_COLOR);
-
-        // Draw hotbar slot backgrounds
-        // The hotbar slots are at indices 10-18, positioned at y=142 relative to topPos
-        // Each slot is 18x18 pixels, starting at x=8
-        renderHotbarSlotBackgrounds(graphics, x, y);
-
-        // Draw armor slot backgrounds (4 slots: head, chest, legs, feet)
-        renderArmorSlotBackgrounds(graphics, x, y);
-
-        // Draw offhand slot background
-        renderOffhandSlotBackground(graphics, x, y);
-
-        // Draw crafting grid slot backgrounds (2x2 grid)
-        renderCraftingGridSlotBackgrounds(graphics, x, y);
-
-        // Draw crafting result slot background
-        renderCraftingResultSlotBackground(graphics, x, y);
     }
 
-    /**
-     * Renders the background for hotbar slots.
-     * Creates a visual appearance similar to vanilla inventory slots.
-     */
-    private void renderHotbarSlotBackgrounds(GuiGraphics graphics, int screenX, int screenY) {
-        // Hotbar position: 9 slots starting at x=8, y=142
-        int hotbarY = screenY + 142;
-
-        for (int i = 0; i < 9; i++) {
-            int slotX = screenX + 8 + i * 18;
-            renderSlotBackground(graphics, slotX, hotbarY);
-        }
-    }
-
-    /**
-     * Renders the background for armor slots.
-     * 4 slots at x=8, y=8/26/44/62
-     */
-    private void renderArmorSlotBackgrounds(GuiGraphics graphics, int screenX, int screenY) {
-        for (int i = 0; i < 4; i++) {
-            int slotX = screenX + 8;
-            int slotY = screenY + 8 + i * 18;
-            renderSlotBackground(graphics, slotX, slotY);
-        }
-    }
-
-    /**
-     * Renders the background for the offhand slot.
-     * 1 slot at x=77, y=62
-     */
-    private void renderOffhandSlotBackground(GuiGraphics graphics, int screenX, int screenY) {
-        int slotX = screenX + 77;
-        int slotY = screenY + 62;
-        renderSlotBackground(graphics, slotX, slotY);
-    }
-
-    /**
-     * Renders the background for crafting grid slots.
-     * 4 slots (2x2) starting at x=98, y=18
-     */
-    private void renderCraftingGridSlotBackgrounds(GuiGraphics graphics, int screenX, int screenY) {
-        for (int row = 0; row < 2; row++) {
-            for (int col = 0; col < 2; col++) {
-                int slotX = screenX + 98 + col * 18;
-                int slotY = screenY + 18 + row * 18;
-                renderSlotBackground(graphics, slotX, slotY);
-            }
-        }
-    }
-
-    /**
-     * Renders the background for the crafting result slot.
-     * 1 slot at x=154, y=28
-     */
-    private void renderCraftingResultSlotBackground(GuiGraphics graphics, int screenX, int screenY) {
-        int slotX = screenX + 154;
-        int slotY = screenY + 28;
-        renderSlotBackground(graphics, slotX, slotY);
-    }
-
-    /**
-     * Renders a single slot background with 3D border effect.
-     * Creates a visual appearance similar to vanilla inventory slots.
-     */
-    private void renderSlotBackground(GuiGraphics graphics, int slotX, int slotY) {
-        // Draw slot background (darker gray for slot interior)
-        graphics.fill(slotX, slotY, slotX + 16, slotY + 16, 0xFF8B8B8B);
-
-        // Draw slot border (lighter on top-left, darker on bottom-right for 3D effect)
-        // Top border (light)
-        graphics.fill(slotX - 1, slotY - 1, slotX + 16, slotY, 0xFFFFFFFF);
-        // Left border (light)
-        graphics.fill(slotX - 1, slotY - 1, slotX, slotY + 16, 0xFFFFFFFF);
-        // Bottom border (dark)
-        graphics.fill(slotX, slotY + 16, slotX + 17, slotY + 17, 0xFF373737);
-        // Right border (dark)
-        graphics.fill(slotX + 16, slotY, slotX + 17, slotY + 17, 0xFF373737);
-    }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {

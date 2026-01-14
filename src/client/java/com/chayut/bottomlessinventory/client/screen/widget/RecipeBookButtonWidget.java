@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -44,9 +45,10 @@ public class RecipeBookButtonWidget extends AbstractWidget {
 
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        // Draw button background with 3D border effect
         int x = getX();
         int y = getY();
+
+        // Draw button background with 3D border effect that changes based on toggle state
         int bgColor = toggled ? 0xFF6B8E23 : 0xFF8B4513; // Green when active, brown when inactive
 
         // Background
