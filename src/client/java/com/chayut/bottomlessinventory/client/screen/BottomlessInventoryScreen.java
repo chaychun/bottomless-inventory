@@ -75,10 +75,9 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
         int x = this.leftPos;
         int y = this.topPos;
 
-        // Draw vanilla inventory texture for the left panel
-        // The vanilla inventory texture is 176x166 pixels and contains all the slot backgrounds
-        // Using the standard blit method with texture coordinates
-        graphics.blit(INVENTORY_LOCATION, x, y, 0, 0, LEFT_PANEL_WIDTH, BACKGROUND_HEIGHT, 256, 256);
+        // For now, skip the vanilla texture and render slot backgrounds manually
+        // This ensures slots are visible while we investigate the proper texture rendering approach
+        renderManualSlotBackgrounds(graphics, x, y);
 
         // Draw right panel background (infinite inventory area)
         graphics.fill(x + RIGHT_PANEL_X_OFFSET, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, RIGHT_PANEL_COLOR);
@@ -88,6 +87,64 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
         graphics.fill(x + LEFT_PANEL_WIDTH, y, x + LEFT_PANEL_WIDTH + 1, y + BACKGROUND_HEIGHT, BORDER_COLOR);
         // Right border
         graphics.fill(x + BACKGROUND_WIDTH - 1, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, BORDER_COLOR);
+    }
+
+    /**
+     * Manually renders slot backgrounds for the left panel.
+     * This is a temporary solution while we investigate proper texture rendering.
+     * Renders backgrounds for: armor slots, offhand slot, crafting grid, and result slot.
+     */
+    private void renderManualSlotBackgrounds(GuiGraphics graphics, int x, int y) {
+        // Color constants for slot rendering
+        final int SLOT_BG_COLOR = 0xFF8B8B8B;
+        final int SLOT_BORDER_COLOR = 0xFF373737;
+        final int PANEL_BG_COLOR = 0xFFC6C6C6;
+        final int SLOT_SIZE = 18;
+
+        // Draw left panel background
+        graphics.fill(x, y, x + LEFT_PANEL_WIDTH, y + BACKGROUND_HEIGHT, PANEL_BG_COLOR);
+
+        // Armor slots (4 slots, vertical, at x=8, y=8)
+        for (int i = 0; i < 4; i++) {
+            int slotX = x + 8;
+            int slotY = y + 8 + (i * SLOT_SIZE);
+            renderSlot(graphics, slotX, slotY, SLOT_SIZE, SLOT_BG_COLOR, SLOT_BORDER_COLOR);
+        }
+
+        // Offhand slot (at x=77, y=62)
+        renderSlot(graphics, x + 77, y + 62, SLOT_SIZE, SLOT_BG_COLOR, SLOT_BORDER_COLOR);
+
+        // Crafting grid 2x2 (at x=98, y=18)
+        for (int row = 0; row < 2; row++) {
+            for (int col = 0; col < 2; col++) {
+                int slotX = x + 98 + (col * SLOT_SIZE);
+                int slotY = y + 18 + (row * SLOT_SIZE);
+                renderSlot(graphics, slotX, slotY, SLOT_SIZE, SLOT_BG_COLOR, SLOT_BORDER_COLOR);
+            }
+        }
+
+        // Crafting result slot (at x=154, y=28)
+        renderSlot(graphics, x + 154, y + 28, SLOT_SIZE, SLOT_BG_COLOR, SLOT_BORDER_COLOR);
+
+        // Hotbar slots (9 slots, at y=142)
+        for (int i = 0; i < 9; i++) {
+            int slotX = x + 8 + (i * SLOT_SIZE);
+            int slotY = y + 142;
+            renderSlot(graphics, slotX, slotY, SLOT_SIZE, SLOT_BG_COLOR, SLOT_BORDER_COLOR);
+        }
+    }
+
+    /**
+     * Renders a single slot background with border.
+     */
+    private void renderSlot(GuiGraphics graphics, int x, int y, int size, int bgColor, int borderColor) {
+        // Background
+        graphics.fill(x, y, x + size, y + size, bgColor);
+        // Border
+        graphics.fill(x, y, x + size, y + 1, borderColor); // Top
+        graphics.fill(x, y + size - 1, x + size, y + size, borderColor); // Bottom
+        graphics.fill(x, y, x + 1, y + size, borderColor); // Left
+        graphics.fill(x + size - 1, y, x + size, y + size, borderColor); // Right
     }
 
 
