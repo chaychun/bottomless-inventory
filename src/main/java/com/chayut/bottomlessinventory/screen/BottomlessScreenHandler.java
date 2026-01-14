@@ -220,9 +220,8 @@ public class BottomlessScreenHandler extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
-        this.access.execute((level, pos) -> {
-            this.clearContainer(player, this.craftingContainer);
-        });
+        // Don't use access.execute() as it's NULL - directly clear the crafting container
+        this.clearContainer(player, this.craftingContainer);
     }
 
     /**
