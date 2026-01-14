@@ -1,10 +1,12 @@
 package com.chayut.bottomlessinventory;
 
+import com.chayut.bottomlessinventory.client.ClientInventoryCache;
 import net.fabricmc.api.ClientModInitializer;
 
 public class BottomlessInventoryClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
+		// Register client-side packet receivers
+		ClientInventoryCache.register();
 	}
 }
