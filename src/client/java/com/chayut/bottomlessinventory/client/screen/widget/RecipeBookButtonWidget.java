@@ -1,34 +1,17 @@
 package com.chayut.bottomlessinventory.client.screen.widget;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.narration.NarratedElementType;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
 /**
  * A toggle button widget for the recipe book.
  * This is a placeholder button that toggles between active and inactive states.
  * Full recipe book integration will be implemented in a later phase.
  */
-public class RecipeBookButtonWidget extends AbstractWidget {
-    // Vanilla recipe book button texture location
-    private static final ResourceLocation RECIPE_BUTTON_LOCATION =
-        ResourceLocation.withDefaultNamespace("textures/gui/recipe_book.png");
-
-    // Texture coordinates for the button states (in the recipe_book.png texture)
+public class RecipeBookButtonWidget extends Button {
     private static final int BUTTON_WIDTH = 20;
     private static final int BUTTON_HEIGHT = 18;
-    private static final int TEXTURE_WIDTH = 256;
-    private static final int TEXTURE_HEIGHT = 256;
-
-    // UV coordinates for button states
-    private static final int INACTIVE_U = 0;
-    private static final int INACTIVE_V = 2;
-    private static final int ACTIVE_U = 0;
-    private static final int ACTIVE_V = 20;
 
     // Toggle state
     private boolean toggled = false;
@@ -40,11 +23,19 @@ public class RecipeBookButtonWidget extends AbstractWidget {
      * @param y The y position
      */
     public RecipeBookButtonWidget(int x, int y) {
-        super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("gui.recipebook.toggleRecipes"));
+        super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("gui.recipebook.toggleRecipes"),
+              button -> ((RecipeBookButtonWidget) button).toggle(), Button.DEFAULT_NARRATION);
+    }
+
+    /**
+     * Toggles the button state.
+     */
+    private void toggle() {
+        this.toggled = !this.toggled;
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         int x = getX();
         int y = getY();
 
@@ -76,28 +67,6 @@ public class RecipeBookButtonWidget extends AbstractWidget {
         if (isHovered()) {
             graphics.fill(x, y, x + BUTTON_WIDTH, y + BUTTON_HEIGHT, 0x40FFFFFF);
         }
-    }
-
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!this.isMouseOver(mouseX, mouseY)) {
-            return false;
-        }
-
-        // Toggle the state when left-clicked
-        if (button == 0) {
-            this.toggled = !this.toggled;
-            playDownSound(net.minecraft.client.Minecraft.getInstance().getSoundManager());
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput output) {
-        output.add(NarratedElementType.TITLE, this.getMessage());
-        output.add(NarratedElementType.USAGE,
-            Component.literal(toggled ? "Recipe book is visible" : "Recipe book is hidden"));
     }
 
     /**
