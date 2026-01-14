@@ -1,6 +1,8 @@
 package com.chayut.bottomlessinventory;
 
 import com.chayut.bottomlessinventory.data.ModAttachments;
+import com.chayut.bottomlessinventory.network.BottomlessNetworking;
+import com.chayut.bottomlessinventory.network.InventorySyncHandler;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -24,6 +26,12 @@ public class BottomlessInventory implements ModInitializer {
 
 		// Register attachments
 		ModAttachments.register();
+
+		// Register networking
+		BottomlessNetworking.register();
+
+		// Register sync handlers (must be after networking)
+		InventorySyncHandler.register();
 
 		LOGGER.info("Bottomless Inventory mod initialized successfully");
 	}
