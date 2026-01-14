@@ -1,0 +1,6 @@
+{
+    "scripts": {
+        "setup": "./gradlew --version",
+        "run": "./gradlew runClient"
+    }
+}
