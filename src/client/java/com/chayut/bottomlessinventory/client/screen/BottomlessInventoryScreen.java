@@ -1,6 +1,7 @@
 package com.chayut.bottomlessinventory.client.screen;
 
 import com.chayut.bottomlessinventory.client.screen.widget.InfiniteGridWidget;
+import com.chayut.bottomlessinventory.client.screen.widget.RecipeBookButtonWidget;
 import com.chayut.bottomlessinventory.screen.BottomlessScreenHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -36,6 +37,7 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
 
     // Widget references
     private InfiniteGridWidget gridWidget;
+    private RecipeBookButtonWidget recipeBookButton;
 
     public BottomlessInventoryScreen(BottomlessScreenHandler handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
@@ -56,8 +58,16 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
         this.gridWidget = new InfiniteGridWidget(gridX, gridY, gridWidth, gridHeight);
         this.addRenderableWidget(this.gridWidget);
 
+        // Add recipe book button in the left panel
+        // Position it near where the 2x2 crafting grid would be
+        // Standard vanilla position is around x=104, y=61 from the screen origin
+        int recipeBookX = this.leftPos + 104;
+        int recipeBookY = this.topPos + 61;
+        this.recipeBookButton = new RecipeBookButtonWidget(recipeBookX, recipeBookY);
+        this.addRenderableWidget(this.recipeBookButton);
+
         // Future widget initialization will be added here:
-        // - tabs, search bar, filter buttons, recipe book button
+        // - tabs, search bar, filter buttons
     }
 
     @Override
