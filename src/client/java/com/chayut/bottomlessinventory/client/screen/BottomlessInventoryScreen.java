@@ -1,0 +1,111 @@
+package com.chayut.bottomlessinventory.client.screen;
+
+import com.chayut.bottomlessinventory.screen.BottomlessScreenHandler;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+
+/**
+ * Client-side screen for the bottomless inventory.
+ * Displays a two-panel layout:
+ * - Left panel: Armor, offhand, 2x2 crafting grid, recipe book
+ * - Right panel: Infinite inventory grid (placeholder for now)
+ * - Bottom: Hotbar
+ */
+public class BottomlessInventoryScreen extends AbstractContainerScreen<BottomlessScreenHandler> {
+
+    // Screen dimensions - wider than vanilla to accommodate both panels
+    private static final int BACKGROUND_WIDTH = 276;
+    private static final int BACKGROUND_HEIGHT = 166;
+
+    // Panel boundaries (for rendering placeholders)
+    private static final int LEFT_PANEL_WIDTH = 176;
+    private static final int RIGHT_PANEL_X_OFFSET = LEFT_PANEL_WIDTH;
+    private static final int RIGHT_PANEL_WIDTH = BACKGROUND_WIDTH - LEFT_PANEL_WIDTH;
+
+    // Color constants for placeholder rendering
+    private static final int LEFT_PANEL_COLOR = 0xFF8B8B8B;      // Gray for left panel
+    private static final int RIGHT_PANEL_COLOR = 0xFF7A7A7A;     // Slightly darker gray for right panel
+    private static final int GRID_PLACEHOLDER_COLOR = 0xFF5A5A5A; // Dark gray for infinite grid area
+    private static final int BORDER_COLOR = 0xFF3C3C3C;          // Dark border color
+
+    public BottomlessInventoryScreen(BottomlessScreenHandler handler, Inventory inventory, Component title) {
+        super(handler, inventory, title);
+        this.imageWidth = BACKGROUND_WIDTH;
+        this.imageHeight = BACKGROUND_HEIGHT;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        // Widget initialization will be added in future phases
+        // This includes: tabs, search bar, filter buttons, scroll bars, recipe book button
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics graphics, float delta, int mouseX, int mouseY) {
+        // Render the background placeholder
+        int x = this.leftPos;
+        int y = this.topPos;
+
+        // Draw left panel background (vanilla elements area)
+        graphics.fill(x, y, x + LEFT_PANEL_WIDTH, y + BACKGROUND_HEIGHT, LEFT_PANEL_COLOR);
+
+        // Draw right panel background (infinite inventory area)
+        graphics.fill(x + RIGHT_PANEL_X_OFFSET, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, RIGHT_PANEL_COLOR);
+
+        // Draw a border around the entire screen
+        // Top border
+        graphics.fill(x, y, x + BACKGROUND_WIDTH, y + 1, BORDER_COLOR);
+        // Bottom border
+        graphics.fill(x, y + BACKGROUND_HEIGHT - 1, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, BORDER_COLOR);
+        // Left border
+        graphics.fill(x, y, x + 1, y + BACKGROUND_HEIGHT, BORDER_COLOR);
+        // Right border
+        graphics.fill(x + BACKGROUND_WIDTH - 1, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, BORDER_COLOR);
+        // Middle divider
+        graphics.fill(x + LEFT_PANEL_WIDTH, y, x + LEFT_PANEL_WIDTH + 1, y + BACKGROUND_HEIGHT, BORDER_COLOR);
+
+        // Draw placeholder for infinite grid area in right panel
+        // This will be replaced with actual grid rendering in future phases
+        int gridX = x + RIGHT_PANEL_X_OFFSET + 8;
+        int gridY = y + 30; // Leave space for tabs and search bar
+        int gridWidth = RIGHT_PANEL_WIDTH - 16;
+        int gridHeight = BACKGROUND_HEIGHT - 40; // Leave space at top and bottom
+
+        graphics.fill(gridX, gridY, gridX + gridWidth, gridY + gridHeight, GRID_PLACEHOLDER_COLOR);
+
+        // Draw border around grid placeholder
+        graphics.fill(gridX, gridY, gridX + gridWidth, gridY + 1, BORDER_COLOR); // Top
+        graphics.fill(gridX, gridY + gridHeight - 1, gridX + gridWidth, gridY + gridHeight, BORDER_COLOR); // Bottom
+        graphics.fill(gridX, gridY, gridX + 1, gridY + gridHeight, BORDER_COLOR); // Left
+        graphics.fill(gridX + gridWidth - 1, gridY, gridX + gridWidth, gridY + gridHeight, BORDER_COLOR); // Right
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        // Render the background (darkened overlay behind the UI)
+        this.renderBackground(graphics, mouseX, mouseY, delta);
+
+        // Render the screen background and slots
+        super.render(graphics, mouseX, mouseY, delta);
+
+        // Render item tooltips
+        this.renderTooltip(graphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        // Draw the screen title - positioned in the left panel
+        graphics.drawString(this.font, this.title, 8, 6, 4210752, false);
+
+        // Draw placeholder text in the right panel to indicate where the infinite grid will go
+        Component gridLabel = Component.literal("Infinite Inventory Grid");
+        int labelX = LEFT_PANEL_WIDTH + 10;
+        int labelY = 10;
+        graphics.drawString(this.font, gridLabel, labelX, labelY, 0xFFFFFF, false);
+
+        // Player inventory label is not drawn - the hotbar is part of the bottomless inventory
+    }
+}
