@@ -1,5 +1,6 @@
 package com.chayut.bottomlessinventory;
 
+import com.chayut.bottomlessinventory.data.ModAttachments;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -19,6 +20,11 @@ public class BottomlessInventory implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("Hello Fabric world!");
+		LOGGER.info("Initializing Bottomless Inventory mod");
+
+		// Register attachments
+		ModAttachments.register();
+
+		LOGGER.info("Bottomless Inventory mod initialized successfully");
 	}
 }
