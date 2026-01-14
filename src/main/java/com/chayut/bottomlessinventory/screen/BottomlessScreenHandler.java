@@ -2,12 +2,17 @@ package com.chayut.bottomlessinventory.screen;
 
 import com.chayut.bottomlessinventory.BottomlessInventory;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.equipment.Equippable;
+import net.minecraft.world.level.Level;
+
+import java.util.Optional;
 
 /**
  * Screen handler for the bottomless inventory screen.
@@ -86,9 +91,41 @@ public class BottomlessScreenHandler extends AbstractContainerMenu {
      */
     @Override
     public void slotsChanged(net.minecraft.world.Container container) {
-        // Crafting result calculation will be implemented in Phase 4
-        // For now, leave empty to allow compilation
-        // The vanilla inventory screen uses InventoryMenu which handles crafting internally
+        this.access.execute((level, pos) -> {
+            slotChangedCraftingGrid(this.player);
+        });
+    }
+
+    /**
+     * Recalculates the crafting result when the crafting grid changes.
+     */
+    private void slotChangedCraftingGrid(Player player) {
+        Level level = player.level();
+        if (!level.isClientSide()) {
+            ServerLevel serverLevel = (ServerLevel) level;
+
+            // Create CraftingInput from the crafting container
+            CraftingInput craftingInput = this.craftingContainer.asCraftInput();
+
+            // Look up the recipe using the recipe manager
+            RecipeManager recipeManager = serverLevel.recipeAccess();
+            Optional<RecipeHolder<CraftingRecipe>> optional = recipeManager.getRecipeFor(
+                    RecipeType.CRAFTING,
+                    craftingInput,
+                    serverLevel
+            );
+
+            // Set the result
+            ItemStack result = optional.map(recipeHolder -> {
+                CraftingRecipe recipe = recipeHolder.value();
+                return recipe.assemble(craftingInput, serverLevel.registryAccess());
+            }).orElse(ItemStack.EMPTY);
+
+            this.resultContainer.setItem(0, result);
+
+            // Notify clients of the result change
+            this.broadcastChanges();
+        }
     }
 
     /**
