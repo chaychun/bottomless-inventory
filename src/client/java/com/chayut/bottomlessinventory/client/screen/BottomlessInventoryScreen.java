@@ -87,6 +87,37 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
         graphics.fill(x + LEFT_PANEL_WIDTH, y, x + LEFT_PANEL_WIDTH + 1, y + BACKGROUND_HEIGHT, BORDER_COLOR);
         // Right border
         graphics.fill(x + BACKGROUND_WIDTH - 1, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, BORDER_COLOR);
+
+        // Draw hotbar slot backgrounds
+        // The hotbar slots are at indices 10-18, positioned at y=142 relative to topPos
+        // Each slot is 18x18 pixels, starting at x=8
+        renderHotbarSlotBackgrounds(graphics, x, y);
+    }
+
+    /**
+     * Renders the background for hotbar slots.
+     * Creates a visual appearance similar to vanilla inventory slots.
+     */
+    private void renderHotbarSlotBackgrounds(GuiGraphics graphics, int screenX, int screenY) {
+        // Hotbar position: 9 slots starting at x=8, y=142
+        int hotbarY = screenY + 142;
+
+        for (int i = 0; i < 9; i++) {
+            int slotX = screenX + 8 + i * 18;
+
+            // Draw slot background (darker gray for slot interior)
+            graphics.fill(slotX, hotbarY, slotX + 16, hotbarY + 16, 0xFF8B8B8B);
+
+            // Draw slot border (lighter on top-left, darker on bottom-right for 3D effect)
+            // Top border (light)
+            graphics.fill(slotX - 1, hotbarY - 1, slotX + 16, hotbarY, 0xFFFFFFFF);
+            // Left border (light)
+            graphics.fill(slotX - 1, hotbarY - 1, slotX, hotbarY + 16, 0xFFFFFFFF);
+            // Bottom border (dark)
+            graphics.fill(slotX, hotbarY + 16, slotX + 17, hotbarY + 17, 0xFF373737);
+            // Right border (dark)
+            graphics.fill(slotX + 16, hotbarY, slotX + 17, hotbarY + 17, 0xFF373737);
+        }
     }
 
     @Override

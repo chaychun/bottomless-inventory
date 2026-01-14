@@ -171,10 +171,13 @@ public class BottomlessScreenHandler extends AbstractContainerMenu {
             }
             // Hotbar slots - try to move to appropriate armor/offhand slot
             else if (slotIndex >= HOTBAR_START && slotIndex <= HOTBAR_END) {
-                // Try armor slots first (the moveItemStackTo will use mayPlace to validate)
+                // Try armor slots first (moveItemStackTo will use mayPlace to validate armor type)
+                // This will only succeed for equippable items that match the armor slot type
                 if (!this.moveItemStackTo(slotStack, ARMOR_START, ARMOR_END + 1, false)) {
-                    // If not armor, try offhand
+                    // If not armor, try offhand (accepts any item)
                     if (!this.moveItemStackTo(slotStack, OFFHAND_SLOT, OFFHAND_SLOT + 1, false)) {
+                        // If offhand is full, item stays in hotbar (no action taken)
+                        // Note: Transfer to infinite storage will be added in Phase 7
                         return ItemStack.EMPTY;
                     }
                 }
