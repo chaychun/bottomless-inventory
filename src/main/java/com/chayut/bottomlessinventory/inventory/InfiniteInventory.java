@@ -1,5 +1,7 @@
 package com.chayut.bottomlessinventory.inventory;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Collection;
@@ -158,6 +160,28 @@ public class InfiniteInventory {
      */
     public boolean contains(ItemStack stack) {
         return getCount(stack) > 0;
+    }
+
+    /**
+     * Serializes this inventory to NBT.
+     *
+     * @param registryAccess Registry access for ItemStack serialization
+     * @return CompoundTag containing all inventory data
+     */
+    public CompoundTag toNbt(HolderLookup.Provider registryAccess) {
+        return InfiniteInventorySerializer.serialize(this, registryAccess);
+    }
+
+    /**
+     * Deserializes an inventory from NBT.
+     * Creates a new InfiniteInventory instance with the data from the tag.
+     *
+     * @param tag The NBT tag to read from
+     * @param registryAccess Registry access for ItemStack deserialization
+     * @return A new InfiniteInventory populated with the data from the tag
+     */
+    public static InfiniteInventory fromNbt(CompoundTag tag, HolderLookup.Provider registryAccess) {
+        return InfiniteInventorySerializer.deserialize(tag, registryAccess);
     }
 
     @Override
