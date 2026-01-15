@@ -199,6 +199,7 @@ public class InfiniteGridWidget extends AbstractWidget {
         }
     }
 
+    @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (!this.isMouseOver(mouseX, mouseY)) {
             return false;
