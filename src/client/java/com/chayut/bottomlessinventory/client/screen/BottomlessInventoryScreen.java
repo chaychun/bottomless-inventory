@@ -5,7 +5,7 @@ import com.chayut.bottomlessinventory.client.screen.widget.RecipeBookButtonWidge
 import com.chayut.bottomlessinventory.screen.BottomlessScreenHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -75,9 +75,16 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
         int x = this.leftPos;
         int y = this.topPos;
 
-        // For now, skip the vanilla texture and render slot backgrounds manually
-        // This ensures slots are visible while we investigate the proper texture rendering approach
-        renderManualSlotBackgrounds(graphics, x, y);
+        // Draw vanilla inventory texture for the left panel (176x166)
+        // The vanilla texture is 256x256, but we only need the top-left 176x166 portion
+        graphics.blit(
+            RenderPipelines.GUI_TEXTURED,
+            INVENTORY_LOCATION,
+            x, y,                    // Screen position
+            0.0f, 0.0f,              // Texture u,v coordinates (top-left)
+            LEFT_PANEL_WIDTH, BACKGROUND_HEIGHT,  // Size to draw (176x166)
+            256, 256                 // Texture PNG dimensions
+        );
 
         // Draw right panel background (infinite inventory area)
         graphics.fill(x + RIGHT_PANEL_X_OFFSET, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, RIGHT_PANEL_COLOR);
@@ -88,65 +95,6 @@ public class BottomlessInventoryScreen extends AbstractContainerScreen<Bottomles
         // Right border
         graphics.fill(x + BACKGROUND_WIDTH - 1, y, x + BACKGROUND_WIDTH, y + BACKGROUND_HEIGHT, BORDER_COLOR);
     }
-
-    /**
-     * Manually renders slot backgrounds for the left panel.
-     * This is a temporary solution while we investigate proper texture rendering.
-     * Renders backgrounds for: armor slots, offhand slot, crafting grid, and result slot.
-     */
-    private void renderManualSlotBackgrounds(GuiGraphics graphics, int x, int y) {
-        // Color constants for slot rendering
-        final int SLOT_BG_COLOR = 0xFF8B8B8B;
-        final int SLOT_BORDER_COLOR = 0xFF373737;
-        final int PANEL_BG_COLOR = 0xFFC6C6C6;
-        final int SLOT_SIZE = 18;
-
-        // Draw left panel background
-        graphics.fill(x, y, x + LEFT_PANEL_WIDTH, y + BACKGROUND_HEIGHT, PANEL_BG_COLOR);
-
-        // Armor slots (4 slots, vertical, at x=8, y=8)
-        for (int i = 0; i < 4; i++) {
-            int slotX = x + 8;
-            int slotY = y + 8 + (i * SLOT_SIZE);
-            renderSlot(graphics, slotX, slotY, SLOT_SIZE, SLOT_BG_COLOR, SLOT_BORDER_COLOR);
-        }
-
-        // Offhand slot (at x=77, y=62)
-        renderSlot(graphics, x + 77, y + 62, SLOT_SIZE, SLOT_BG_COLOR, SLOT_BORDER_COLOR);
-
-        // Crafting grid 2x2 (at x=98, y=18)
-        for (int row = 0; row < 2; row++) {
-            for (int col = 0; col < 2; col++) {
-                int slotX = x + 98 + (col * SLOT_SIZE);
-                int slotY = y + 18 + (row * SLOT_SIZE);
-                renderSlot(graphics, slotX, slotY, SLOT_SIZE, SLOT_BG_COLOR, SLOT_BORDER_COLOR);
-            }
-        }
-
-        // Crafting result slot (at x=154, y=28)
-        renderSlot(graphics, x + 154, y + 28, SLOT_SIZE, SLOT_BG_COLOR, SLOT_BORDER_COLOR);
-
-        // Hotbar slots (9 slots, at y=142)
-        for (int i = 0; i < 9; i++) {
-            int slotX = x + 8 + (i * SLOT_SIZE);
-            int slotY = y + 142;
-            renderSlot(graphics, slotX, slotY, SLOT_SIZE, SLOT_BG_COLOR, SLOT_BORDER_COLOR);
-        }
-    }
-
-    /**
-     * Renders a single slot background with border.
-     */
-    private void renderSlot(GuiGraphics graphics, int x, int y, int size, int bgColor, int borderColor) {
-        // Background
-        graphics.fill(x, y, x + size, y + size, bgColor);
-        // Border
-        graphics.fill(x, y, x + size, y + 1, borderColor); // Top
-        graphics.fill(x, y + size - 1, x + size, y + size, borderColor); // Bottom
-        graphics.fill(x, y, x + 1, y + size, borderColor); // Left
-        graphics.fill(x + size - 1, y, x + size, y + size, borderColor); // Right
-    }
-
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {

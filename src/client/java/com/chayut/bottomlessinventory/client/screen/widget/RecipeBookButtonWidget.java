@@ -2,16 +2,22 @@ package com.chayut.bottomlessinventory.client.screen.widget;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * A toggle button widget for the recipe book.
- * This is a placeholder button that toggles between active and inactive states.
+ * Uses vanilla recipe book button sprites for consistent look.
  * Full recipe book integration will be implemented in a later phase.
  */
 public class RecipeBookButtonWidget extends Button {
     private static final int BUTTON_WIDTH = 20;
     private static final int BUTTON_HEIGHT = 18;
+
+    // Vanilla recipe book button sprites
+    private static final ResourceLocation BUTTON_SPRITE = ResourceLocation.withDefaultNamespace("recipe_book/button");
+    private static final ResourceLocation BUTTON_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace("recipe_book/button_highlighted");
 
     // Toggle state
     private boolean toggled = false;
@@ -36,36 +42,16 @@ public class RecipeBookButtonWidget extends Button {
 
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        int x = getX();
-        int y = getY();
+        // Choose sprite based on hover state
+        ResourceLocation sprite = isHovered() ? BUTTON_HIGHLIGHTED_SPRITE : BUTTON_SPRITE;
 
-        // Draw button background with 3D border effect that changes based on toggle state
-        int bgColor = toggled ? 0xFF6B8E23 : 0xFF8B4513; // Green when active, brown when inactive
+        // Render the vanilla sprite
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, getX(), getY(), BUTTON_WIDTH, BUTTON_HEIGHT);
 
-        // Background
-        graphics.fill(x, y, x + BUTTON_WIDTH, y + BUTTON_HEIGHT, bgColor);
-
-        // 3D borders
-        graphics.fill(x, y, x + BUTTON_WIDTH, y + 1, 0xFFFFFFFF); // Top (light)
-        graphics.fill(x, y, x + 1, y + BUTTON_HEIGHT, 0xFFFFFFFF); // Left (light)
-        graphics.fill(x, y + BUTTON_HEIGHT - 1, x + BUTTON_WIDTH, y + BUTTON_HEIGHT, 0xFF373737); // Bottom (dark)
-        graphics.fill(x + BUTTON_WIDTH - 1, y, x + BUTTON_WIDTH, y + BUTTON_HEIGHT, 0xFF373737); // Right (dark)
-
-        // Draw a simple book icon (rectangle with lines)
-        int iconX = x + 4;
-        int iconY = y + 3;
-        // Book cover
-        graphics.fill(iconX, iconY, iconX + 12, iconY + 12, 0xFFDEB887);
-        // Book spine
-        graphics.fill(iconX, iconY, iconX + 2, iconY + 12, 0xFF8B4513);
-        // Page lines
-        graphics.fill(iconX + 4, iconY + 3, iconX + 10, iconY + 4, 0xFF000000);
-        graphics.fill(iconX + 4, iconY + 5, iconX + 10, iconY + 6, 0xFF000000);
-        graphics.fill(iconX + 4, iconY + 7, iconX + 10, iconY + 8, 0xFF000000);
-
-        // Draw hover overlay if mouse is over the button
-        if (isHovered()) {
-            graphics.fill(x, y, x + BUTTON_WIDTH, y + BUTTON_HEIGHT, 0x40FFFFFF);
+        // Draw a subtle overlay when toggled to indicate active state
+        if (toggled) {
+            // Green tint overlay to show recipe book is open
+            graphics.fill(getX(), getY(), getX() + BUTTON_WIDTH, getY() + BUTTON_HEIGHT, 0x4000FF00);
         }
     }
 
